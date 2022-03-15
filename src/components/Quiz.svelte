@@ -1,49 +1,47 @@
 <script>
-  const ENDPOINT =
-    'https://opentdb.com/api.php?amount=10&category=22&type=multiple'
-  let correctAnswer = 'b'
-  let answers = ['a', 'b', 'c', 'd']
+  import Question from './Question.svelte'
+  const ENDPOINT = 'https://opentdb.com/api.php?amount=10&category=22&type=multiple'
 
   let quiz = getQuiz()
-
-  let result = ''
-
-  function pickAnswer(answer) {
-    if (answer == correctAnswer) {
-      return (result = 'Correct')
-    }
-    result = 'whOOPSIE'
-  }
+  let activeQuestion = 0
+  let score = 0
 
   async function getQuiz() {
     const res = await fetch(ENDPOINT)
     const quiz = await res.json()
-    console.log(quiz)
     return quiz
   }
 
-  function handleClick() {
+  function nextQuestion() {
+    activeQuestion += 1
+  }
+
+  function resetQuiz() {
+    score = 0
     quiz = getQuiz()
+    activeQuestion = 0
+  }
+
+  function updateScore() {
+    score++
   }
 </script>
 
 <div>
-  {#if result}
-    <h4>{result}</h4>
-  {:else}
-    <h5>Pick and answer</h5>
-  {/if}
+  <button on:click={resetQuiz}>Start Quiz</button>
+
+  <h3>Score: {score}</h3>
+  <h4>Question #{activeQuestion + 1}</h4>
 
   {#await quiz}
     loading...
   {:then data}
-    <h3>{data.results[0].question}</h3>
+    {#each data.results as question, index}
+      {#if index === activeQuestion}
+        <Question {nextQuestion} {question} {updateScore} />
+      {/if}
+    {/each}
   {/await}
-
-  <button on:click={handleClick}>Get Quiz</button>
-  {#each answers as answer}
-    <button on:click={() => pickAnswer(answer)}>Answer {answer}</button>
-  {/each}
 </div>
 
 <style></style>
