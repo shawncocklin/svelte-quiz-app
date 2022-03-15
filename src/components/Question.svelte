@@ -38,6 +38,12 @@
   }
 </script>
 
+<h3>{@html question.question}</h3>
+
+{#each allAnswers as answer}
+  <button on:click={() => checkQuestion(answer.correct)}>{@html answer.answer}</button>
+{/each}
+
 {#if isAnswered}
   <h4>
     {#if isCorrect}
@@ -46,11 +52,9 @@
       Whoopsie!
     {/if}
   </h4>
-  <button on:click={nextQuestion}>Next Question</button>
 {/if}
 
-<h3>{@html question.question}</h3>
+<div><button on:click={nextQuestion}>Next Question</button></div>
 
-{#each allAnswers as answer}
-  <button on:click={() => checkQuestion(answer.correct)}>{@html answer.answer}</button>
-{/each}
+<style>
+</style>
