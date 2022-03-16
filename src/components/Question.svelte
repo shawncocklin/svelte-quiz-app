@@ -1,8 +1,8 @@
 <script>
+  import { score } from '../Store.js'
   export let question
   export let nextQuestion
-  export let updateScore
-
+  //#region variables
   let answers = question.incorrect_answers.map((answer) => {
     return {
       answer: answer,
@@ -20,6 +20,7 @@
       correct: true,
     },
   ]
+  //#endregion
 
   shuffle(allAnswers)
 
@@ -32,7 +33,9 @@
       isCorrect = correct
       isAnswered = true
       if (correct === true) {
-        updateScore()
+        score.update((val) => {
+          return val + 1
+        })
       }
     }
   }
@@ -45,7 +48,7 @@
 {/each}
 
 {#if isAnswered}
-  <h4>
+  <h4 class:correct={isCorrect} class:wrong={!isCorrect}>
     {#if isCorrect}
       Correct!
     {:else}
@@ -54,7 +57,13 @@
   </h4>
 {/if}
 
-<div><button on:click={nextQuestion}>Next Question</button></div>
+<div><button disabled={!isAnswered} on:click={nextQuestion}>Next Question</button></div>
 
 <style>
+  .wrong {
+    color: red;
+  }
+  .correct {
+    color: green;
+  }
 </style>
